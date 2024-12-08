@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Models
+model Usuarios {
+  id String @id @default(uuid())
+  nome String
+  email String
+  senha String
+  createdAt DateTime? @default(now())
+  upDatedAt DateTime? @default(now())
+}
+
+model Categorias{
+  id String @id @default(uuid())
+  nome String
+  createdAt DateTime? @default(now())
+  upDatedAt DateTime? @default(now())
+  produtos Produtos[]
+}
+
+model Produtos{
+  id String @id @default(uuid())
+  nome String
+  descricao String
+  preco String
+  foto String
+  createdAt DateTime? @default(now())
+  upDatedAt DateTime? @default(now())
+  
+  categoriaId String
+  categoria Categorias @relation(fields: [categoriaId], references: [id])
+  item ItensComanda[]
+}
+
+model Comandas{
+  id String @id @default(uuid())
+  mesa Int
+  nome String?
+  status Boolean @default(false)
+  rascunho Boolean @default(true)
+  createdAt DateTime? @default(now())
+  upDatedAt DateTime? @default(now())
+
+  item ItensComanda[]
+}
+
+model ItensComanda{
+  id String @id @default(uuid())
+  quantidade Int
+  createdAt DateTime? @default(now())
+  upDatedAt DateTime? @default(now())
+
+  comandaId String
+  produtoId String
+  comanda Comandas @relation(fields: [comandaId], references: [id])
+  produto Produtos @relation(fields: [produtoId], references: [id])
+}
